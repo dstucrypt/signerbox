@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="uk">
+    <head>
+        <meta charset="utf-8" />
+        <title>Digital sign</title>
+        <script type="text/javascript" src="/static/js/build.js"></script>
+        <link type="text/css" rel="stylesheet" href="/static/css/style.css" />
+    </head>
+    <body>
+        <div id="ui">
+            <h1>Website want's to know your identity</h1>
+            <div class="buttons_container">
+                <button data-bind="click: accept" >Grant</button>
+                <button data-bind="click: decline" >Decline</button>
+            </div>
+            <div data-bind="with: drop_zone">
+                <div id="drop_zone" data-bind="visible: visible">
+                    DROP ZONE
+                </div>
+            </div>
+            <div data-bind="with: password">
+                <div data-bind="visible: visible">
+                    PASSWORD INPUT
+                    <input data-bind="value: password" type="password" value="" />
+                    <button data-bind="click: accept">Enter</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            var nonce = "{{nonce}}";
+            require('ui').setup(document.getElementById('ui'), nonce);
+        </script>
+    </body>
+</html>
