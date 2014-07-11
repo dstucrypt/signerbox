@@ -132,7 +132,9 @@ var UiMain = function (nonce) {
                 sbuf.writeUInt8(tmp < 0 ? 256 + tmp : tmp, idx + 2 + mlen);
             };
 
-            this.send_code(jk.b64_encode(sbuf), nonce, domain_test, this.cert_id);
+            this.send_code(jk.b64_encode(sbuf, undefined, true),
+                           nonce, domain_test, this.cert_id
+            );
         },
         send_code: function(sign, nonce, domain, cid) {
             var lo = (

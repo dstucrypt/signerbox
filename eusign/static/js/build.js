@@ -11425,11 +11425,8 @@ var jk = require('../curve.js'),
     DstuPrivkey = require('../spec/keystore.js'),
     Pub = require('./Pub.js'),
     Big = require('../../3rtparty/jsbn.packed.js'),
-    ZERO = new Big("0"),
-    SBOX_1;
+    ZERO = new Big("0");
 
-SBOX_1 = new Buffer("A9D6EB45F13C708280C4967B231F5EADF658EBA4C037291D38D96BF025"+
-            "CA4E17F8E9720DC615B43A28975F0BC1DEA36438B564EA2C179FD0123E6DB8FAC57904","hex");
 
 var gost_salt = function (ukm) {
     return dstszi2010.SharedInfo.encode({
@@ -11554,30 +11551,6 @@ var Priv = function (p_curve, param_d) {
         pub = function () {
             return new Pub(p_curve, p_curve.base.mul(param_d).negate());
         },
-        to_asn1 = function () {
-            var param = {
-                version: 0,
-                priv0: {
-                    id: "DSTU_4145_LE",
-                    p: {
-                        p: {
-                            p: {
-                                param_m: 257,
-                                ks: 12,
-                            },
-                            param_a: 0,
-                            param_b: new Buffer("10BEE3DB6AEA9E1F86578C45C12594FF942394A7D738F9187E6515017294F4CE01", "hex"),
-                            order: new Buffer("00800000000000000000000000000000006759213AF182E987D3E17714907D470D", "hex"),
-                            bp: new Buffer("B60FD2D8DCE8A93423C6101BCA91C47A007E6C300B26CD556C9B0E7D20EF292A00", "hex"),
-                        },
-                        sbox: new Buffer(SBOX_1, 'hex'),
-                    },
-                },
-                param_d: new Buffer(param_d.toByteArray()),
-                attr: [],
-            };
-            return DstuPrivkey.encode(param, 'der');
-        },
         /*
             Diffie-Hellman key exchange proto and DSTSZI key wrapping algo
             Implementation note:
@@ -11637,7 +11610,6 @@ var Priv = function (p_curve, param_d) {
         'type': 'Priv',
         "d" : param_d,
         "curve": p_curve,
-        "to_asn1": to_asn1,
     };
     return ob;
 };
@@ -12455,12 +12427,18 @@ module.exports = {
 /*jslint plusplus: true, bitwise: true */
 'use strict';
 
-var B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_=",
+var B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+    B64_URL = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_=",
     B64_TEST = /[^A-Za-z0-9\+\/\=]/g,
     B64_REPLACE = /[^A-Za-z0-9\+\/\=]/g;
 
-var b64_encode = function (numbrs, line) {
-    var ret = [], b1, b2, b3, e1, e2, e3, e4, i = 0;
+var b64_encode = function (numbrs, line, safe) {
+    var table, ret = [], b1, b2, b3, e1, e2, e3, e4, i = 0;
+    if (safe === true) {
+        table = B64_URL;
+    } else {
+        table = B64;
+    }
     while (i < numbrs.length) {
 
         b1 = numbrs[i++];
@@ -12472,10 +12450,10 @@ var b64_encode = function (numbrs, line) {
         e3 = ((b2 & 15) << 2) | (b3 >> 6);
         e4 = b3 & 63;
 
-        ret.push(B64.charAt(e1));
-        ret.push(B64.charAt(e2));
-        ret.push(B64.charAt(e3));
-        ret.push(B64.charAt(e4));
+        ret.push(table.charAt(e1));
+        ret.push(table.charAt(e2));
+        ret.push(table.charAt(e3));
+        ret.push(table.charAt(e4));
 
         if ((i > 0) && (line !== undefined) && ((i % line) === 0)) {
             ret.push('\n');
@@ -18749,7 +18727,9 @@ var UiMain = function (nonce) {
                 sbuf.writeUInt8(tmp < 0 ? 256 + tmp : tmp, idx + 2 + mlen);
             };
 
-            this.send_code(jk.b64_encode(sbuf), nonce, domain_test, this.cert_id);
+            this.send_code(jk.b64_encode(sbuf, undefined, true),
+                           nonce, domain_test, this.cert_id
+            );
         },
         send_code: function(sign, nonce, domain, cid) {
             var lo = (
