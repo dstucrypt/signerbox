@@ -2,6 +2,7 @@ var UIDrop = require('./uidrop.js'),
     UIPassword = require('./uipassword.js'),
     jk = require('jkurwa'),
     em_gost = require('em-gost'),
+    $ = require('zepto-browserify').$,
     keycoder = new jk.Keycoder();
 
 var UiMain = function (nonce) {
@@ -90,7 +91,25 @@ var UiMain = function (nonce) {
 
             this.key = keymatch;
             this.drop_zone.hide();
-            this.create_sign();
+            var self = this;
+            this.publish_cert(this.cert_data, function () {
+                self.create_sign();
+            })
+        },
+        publish_cert: function (cert, cb) {
+            var self = this;
+            $.ajax({
+                type: 'POST',
+                url: '/api/1/certificates/',
+                data: new Uint8Array(cert),
+                contentType: 'application/octet-stream',
+                processData: false,
+                context: this,
+                success: function (data) {
+                    self.cert_id = data.cert_id;
+                    cb();
+                },
+            });
         },
         create_sign: function () {
             var to_sign, sign, tmp_s, tmp_r, mlen, sbuf, idx, tmp;
@@ -113,10 +132,16 @@ var UiMain = function (nonce) {
                 sbuf.writeUInt8(tmp < 0 ? 256 + tmp : tmp, idx + 2 + mlen);
             };
 
-            this.send_code(jk.b64_encode(sbuf), nonce, domain_test);
+            this.send_code(jk.b64_encode(sbuf), nonce, domain_test, this.cert_id);
         },
-        send_code: function(sign, nonce, domain) {
-            window.location = domain + '?sign=' + sign + "&nonce=" + nonce;
+        send_code: function(sign, nonce, domain, cid) {
+            var lo = (
+                    domain +
+                    '?sign=' + sign +
+                    "&nonce=" + nonce +
+                    '&cert_id=' + cid
+            );
+            window.location = lo;
         },
         identity: null,
         drop_zone: new UIDrop(this),
@@ -125,7 +150,7 @@ var UiMain = function (nonce) {
     ob.drop_zone.main = ob;
     ob.password.main = ob;
 
-    var domain_test = 'https://dstu.enodev.org';
+    var domain_test = 'https://dstu.enodev.org/wp-login.php';
 
     return ob;
 };

@@ -16,7 +16,7 @@ SRC=\
 	ui/uipassword.js \
 
 
-NODE_PACKAGES = asn1.js jkurwa em-gost knockout
+NODE_PACKAGES = asn1.js jkurwa em-gost knockout zepto-browserify
 
 NPM=$(patsubst %,node_modules/%/package.json,$(NODE_PACKAGES))
 
