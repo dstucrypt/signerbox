@@ -18600,7 +18600,7 @@ var UIDrop = require('./uidrop.js'),
     $ = require('zepto-browserify').$,
     keycoder = new jk.Keycoder();
 
-var UiMain = function (nonce) {
+var UiMain = function (nonce, csrf, domain) {
     var ob = {
         accept: function () {
             if (this.identity === null) {
@@ -18708,7 +18708,7 @@ var UiMain = function (nonce) {
         },
         create_sign: function () {
             var to_sign, sign, tmp_s, tmp_r, mlen, sbuf, idx, tmp;
-            to_sign = em_gost.compute_hash(nonce + '|' + domain_test, 'binary');
+            to_sign = em_gost.compute_hash(nonce + '|' + domain, 'binary');
             sign = this.key.sign(to_sign);
             tmp_s = sign.s.toByteArray();
             tmp_r = sign.r.toByteArray();
@@ -18728,7 +18728,7 @@ var UiMain = function (nonce) {
             };
 
             this.send_code(jk.b64_encode(sbuf, undefined, true),
-                           nonce, domain_test, this.cert_id
+                           nonce, domain, this.cert_id
             );
         },
         send_code: function(sign, nonce, domain, cid) {
@@ -18746,8 +18746,6 @@ var UiMain = function (nonce) {
     };
     ob.drop_zone.main = ob;
     ob.password.main = ob;
-
-    var domain_test = 'https://dstu.enodev.org/wp-login.php';
 
     return ob;
 };
