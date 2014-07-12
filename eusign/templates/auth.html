@@ -8,7 +8,7 @@
     </head>
     <body>
         <div id="ui">
-            <h1>Website want's to know your identity</h1>
+            <h1>Website {{app.name}} want's to know your identity</h1>
             <div class="buttons_container">
                 <button data-bind="click: accept" >Grant</button>
                 <button data-bind="click: decline" >Decline</button>
@@ -28,8 +28,13 @@
         </div>
 
         <script>
-            var nonce = "{{nonce}}";
-            require('ui').setup(document.getElementById('ui'), nonce);
+            var nonce = "{{nonce}}",
+                csrf = "{{csrf_token}}",
+                redirect_domain = "{{app.auth_url}}";
+
+            require('ui').setup(document.getElementById('ui'),
+                                nonce, csrf,
+                                redirect_domain);
         </script>
     </body>
 </html>

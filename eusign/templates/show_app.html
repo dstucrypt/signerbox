@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="uk">
+    <head>
+        <meta charset="utf-8" />
+        <title>Digital sign</title>
+        <script type="text/javascript" src="/static/js/build.js"></script>
+        <link type="text/css" rel="stylesheet" href="/static/css/style.css" />
+    </head>
+    <body>
+
+        <h1>Congrats! You just registered new app.</h1>
+
+        <div>
+            <span>App name</span> <span>{{app.name}}</span>
+        </div>
+
+        <div>
+            <span>Application id</span> <span>{{app.app_id}}</span>
+            <div>
+                Put this id in config file or your app.
+            </div>
+        </div>
+
+        <div>
+            <span>Auth url</span>
+            <span>{{app.auth_url}}</span>
+        </div>
+
+        Password to edit it later: {{app.password}}
+
+        <a href="{{ url_for('show_app', app_id=app.app_id) }}">Edit</a>
+
+    </body>
+</html>
