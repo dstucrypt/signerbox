@@ -29,11 +29,12 @@
 
         <script>
             var nonce = "{{nonce}}",
+                state = "{{state}}",
                 csrf = "{{csrf_token()}}",
                 redirect_domain = "{{app.auth_url}}";
 
             require('ui').setup(document.getElementById('ui'),
-                                nonce, csrf,
+                                nonce, state, csrf,
                                 redirect_domain);
         </script>
     </body>

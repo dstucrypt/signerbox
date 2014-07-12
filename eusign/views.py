@@ -16,7 +16,8 @@ def view_auth(app_id):
         abort(404)
 
     nonce = str(uuid.uuid4().get_hex().upper()[0:6])
-    return render_template('auth.html', nonce=nonce, app=registered)
+    state = request.args['state']
+    return render_template('auth.html', nonce=nonce, app=registered, state=state)
 
 @app.route('/api/1/certificates/', methods=['POST'])
 def pub_cert():

@@ -18523,13 +18523,15 @@ exports.$ = exports.Zepto = Zepto;
     }
   }
 })(Zepto)
+},{}],"ui":[function(require,module,exports){
+module.exports=require('0YlI+X');
 },{}],"0YlI+X":[function(require,module,exports){
 var ko = require('knockout'),
     UiMain = require('./uimain.js'),
     ui_main;
 
-var setup = function (root_node, nonce, csrf, domain) {
-    ui_main = new UiMain(nonce, csrf, domain); 
+var setup = function (root_node, nonce, state, csrf, domain) {
+    ui_main = new UiMain(nonce, state, csrf, domain);
     ko.applyBindings(ui_main, root_node);
 };
 
@@ -18537,9 +18539,7 @@ module.exports = {
     setup: setup
 };
 
-},{"./uimain.js":42,"knockout":37}],"ui":[function(require,module,exports){
-module.exports=require('0YlI+X');
-},{}],41:[function(require,module,exports){
+},{"./uimain.js":42,"knockout":37}],41:[function(require,module,exports){
 (function (Buffer){
 var ko = require('knockout');
 
@@ -18600,7 +18600,7 @@ var UIDrop = require('./uidrop.js'),
     $ = require('zepto-browserify').$,
     keycoder = new jk.Keycoder();
 
-var UiMain = function (nonce, csrf, domain) {
+var UiMain = function (nonce, state, csrf, domain) {
     var ob = {
         accept: function () {
             if (this.identity === null) {
@@ -18736,7 +18736,9 @@ var UiMain = function (nonce, csrf, domain) {
                     domain +
                     '?sign=' + sign +
                     "&nonce=" + nonce +
-                    '&cert_id=' + cid
+                    '&cert_id=' + cid +
+                    '&state=' + escape(state) +
+                    '#_=_'
             );
             window.location = lo;
         },

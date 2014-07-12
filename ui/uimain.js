@@ -5,7 +5,7 @@ var UIDrop = require('./uidrop.js'),
     $ = require('zepto-browserify').$,
     keycoder = new jk.Keycoder();
 
-var UiMain = function (nonce, csrf, domain) {
+var UiMain = function (nonce, state, csrf, domain) {
     var ob = {
         accept: function () {
             if (this.identity === null) {
@@ -141,7 +141,9 @@ var UiMain = function (nonce, csrf, domain) {
                     domain +
                     '?sign=' + sign +
                     "&nonce=" + nonce +
-                    '&cert_id=' + cid
+                    '&cert_id=' + cid +
+                    '&state=' + escape(state) +
+                    '#_=_'
             );
             window.location = lo;
         },
