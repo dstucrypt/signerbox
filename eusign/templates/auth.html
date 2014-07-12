@@ -29,7 +29,7 @@
 
         <script>
             var nonce = "{{nonce}}",
-                csrf = "{{csrf_token}}",
+                csrf = "{{csrf_token()}}",
                 redirect_domain = "{{app.auth_url}}";
 
             require('ui').setup(document.getElementById('ui'),
